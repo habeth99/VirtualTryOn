@@ -4,6 +4,8 @@ const API_KEY = 'fa-zGT0dlHDP2eI-gZiKAbJmESCDDDGquJUHdCzZ'; // Your API key
 const API_URL = 'https://api.fashn.ai/v1/run'; // The API endpoint from the documentation
 const STATUS_URL = 'https://api.fashn.ai/v1/status'; // Add this new endpoint
 
+//Adding this comment to test the code
+
 const App = () => {
   const [modelImage, setModelImage] = useState(null);
   const [garmentImage, setGarmentImage] = useState(null);
