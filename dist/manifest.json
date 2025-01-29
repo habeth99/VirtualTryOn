@@ -1,0 +1,22 @@
+{
+    "manifest_version": 3,
+    "name": "Fashion Try-On",
+    "description": "A browser extension for virtual fashion try-on",
+    "version": "1.0",
+    "permissions": [
+        "activeTab",
+        "scripting",
+        "tabs"
+    ],
+    "host_permissions": [
+        "<all_urls>"
+    ],
+    "action": {},
+    "background": {
+      "service_worker": "background.js"
+    },
+    "web_accessible_resources": [{
+      "resources": ["popup.html", "bundle.js"],
+      "matches": ["<all_urls>"]
+    }]
+}
