@@ -144,6 +144,18 @@ chrome.action.onClicked.addListener(async (tab) => {
 
       // Initial position
       updateDragHandle();
+
+      // Add this after creating the iframe and drag handle
+      window.addEventListener('message', (event) => {
+        if (event.data === 'closeExtension') {
+          const sidebar = document.getElementById('fashion-tryon-sidebar');
+          const dragHandle = document.getElementById('fashion-tryon-drag-handle');
+          if (sidebar) sidebar.remove();
+          if (dragHandle) dragHandle.remove();
+          injected = false;
+          currentTabId = null;
+        }
+      });
     }
   });
 });

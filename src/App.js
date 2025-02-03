@@ -116,14 +116,8 @@ const App = () => {
 
   // Add this function to handle closing
   const handleClose = () => {
-    const sidebar = document.getElementById('fashion-tryon-sidebar');
-    const dragHandle = document.getElementById('fashion-tryon-drag-handle');
-    if (sidebar) sidebar.remove();
-    if (dragHandle) dragHandle.remove();
-    // Send message to background script
-    if (chrome && chrome.runtime) {
-      chrome.runtime.sendMessage({ action: 'windowClosed' });
-    }
+    // Send message to parent window
+    window.parent.postMessage('closeExtension', '*');
   };
 
   return (
