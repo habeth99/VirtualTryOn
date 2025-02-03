@@ -1,17 +1,18 @@
 let injected = false;
 let currentTabId = null;
 
-// Listen for messages from content script
-chrome.runtime.onMessage.addListener((message) => {
-  if (message.action === 'windowClosed') {
+// Listen for tab updates (including refreshes and navigation)
+chrome.tabs.onUpdated.addListener((tabId) => {
+  if (tabId === currentTabId) {
     injected = false;
     currentTabId = null;
   }
 });
 
 chrome.action.onClicked.addListener(async (tab) => {
-  // Check if we're already injected in this tab
-  if (currentTabId === tab.id) {
+  console.log('Extension clicked, current state:', { injected, currentTabId });
+
+  if (injected) {
     // Remove existing elements
     await chrome.scripting.executeScript({
       target: { tabId: tab.id },
@@ -27,24 +28,7 @@ chrome.action.onClicked.addListener(async (tab) => {
     return;
   }
 
-  // If we're injected in a different tab, clean up first
-  if (currentTabId) {
-    await chrome.scripting.executeScript({
-      target: { tabId: currentTabId },
-      function: () => {
-        const sidebar = document.getElementById('fashion-tryon-sidebar');
-        const dragHandle = document.getElementById('fashion-tryon-drag-handle');
-        if (sidebar) sidebar.remove();
-        if (dragHandle) dragHandle.remove();
-      }
-    });
-  }
-
-  // Now inject in the new tab
-  currentTabId = tab.id;
-  injected = true;
-
-  // Inject our UI into the page
+  // Inject new elements
   await chrome.scripting.insertCSS({
     target: { tabId: tab.id },
     css: `
@@ -58,7 +42,7 @@ chrome.action.onClicked.addListener(async (tab) => {
         border-radius: 8px;
         box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         z-index: 2147483647;
-        background: #2C3333;  /* Charcoal color */
+        background: #2C3333;
         overflow: hidden;
       }
       
@@ -75,18 +59,28 @@ chrome.action.onClicked.addListener(async (tab) => {
   await chrome.scripting.executeScript({
     target: { tabId: tab.id },
     function: () => {
-      // Create and append the iframe
       const sidebar = document.createElement('iframe');
       sidebar.id = 'fashion-tryon-sidebar';
       sidebar.src = chrome.runtime.getURL('popup.html');
       document.body.appendChild(sidebar);
 
-      // Create drag handle
       const dragHandle = document.createElement('div');
       dragHandle.id = 'fashion-tryon-drag-handle';
       document.body.appendChild(dragHandle);
 
-      // Initialize dragging
+      // Add message listener for close button
+      window.addEventListener('message', (event) => {
+        if (event.data === 'closeExtension') {
+          const sidebar = document.getElementById('fashion-tryon-sidebar');
+          const dragHandle = document.getElementById('fashion-tryon-drag-handle');
+          if (sidebar) sidebar.remove();
+          if (dragHandle) dragHandle.remove();
+          // Send message back to background script
+          chrome.runtime.sendMessage({ action: 'extensionClosed' });
+        }
+      });
+
+      // Your existing drag handle code...
       let isDragging = false;
       let currentX;
       let currentY;
@@ -95,25 +89,19 @@ chrome.action.onClicked.addListener(async (tab) => {
       let xOffset = 20;
       let yOffset = 20;
 
-      // Update drag handle position
       const updateDragHandle = () => {
         dragHandle.style.left = `${xOffset}px`;
         dragHandle.style.top = `${yOffset}px`;
-        dragHandle.style.width = '340px'; // Reduced width to not cover the close button
-        dragHandle.style.height = '40px';  // Height for drag area
-        dragHandle.style.marginRight = '60px';
+        dragHandle.style.width = '340px';
+        dragHandle.style.height = '40px';
         
-        // Update sidebar position
         sidebar.style.left = `${xOffset}px`;
         sidebar.style.top = `${yOffset}px`;
       };
 
       const dragStart = (e) => {
-        // Check if click is on close button area
         const clickX = e.clientX - xOffset;
-        if (clickX > 340) { // If click is in the close button area
-          return;
-        }
+        if (clickX > 340) return;
         
         initialX = e.clientX - xOffset;
         initialY = e.clientY - yOffset;
@@ -137,27 +125,24 @@ chrome.action.onClicked.addListener(async (tab) => {
         }
       };
 
-      // Add event listeners
       dragHandle.addEventListener('mousedown', dragStart);
       document.addEventListener('mousemove', drag);
       document.addEventListener('mouseup', dragEnd);
 
-      // Initial position
       updateDragHandle();
-
-      // Add this after creating the iframe and drag handle
-      window.addEventListener('message', (event) => {
-        if (event.data === 'closeExtension') {
-          const sidebar = document.getElementById('fashion-tryon-sidebar');
-          const dragHandle = document.getElementById('fashion-tryon-drag-handle');
-          if (sidebar) sidebar.remove();
-          if (dragHandle) dragHandle.remove();
-          injected = false;
-          currentTabId = null;
-        }
-      });
     }
   });
+  
+  injected = true;
+  currentTabId = tab.id;
+});
+
+// Listen for messages from content script
+chrome.runtime.onMessage.addListener((message) => {
+  if (message.action === 'extensionClosed') {
+    injected = false;
+    currentTabId = null;
+  }
 });
 
 chrome.windows.onRemoved.addListener((removedWindowId) => {
