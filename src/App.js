@@ -125,7 +125,10 @@ const App = () => {
       padding: '15px',
       width: '100%',
       boxSizing: 'border-box',
-      position: 'relative'  // Added for close button positioning
+      position: 'relative',
+      height: '100%',  // Added to ensure full height usage
+      display: 'flex',  // Added flex display
+      flexDirection: 'column'  // Stack children vertically
     }}>
       {/* Close Button */}
       <button
@@ -159,7 +162,7 @@ const App = () => {
         borderRadius: '8px',
         padding: '15px',
         marginBottom: '15px',
-        height: '200px',
+        height: '350px',  // Increased from 300px
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center'
@@ -195,8 +198,8 @@ const App = () => {
           border: '2px solid #444',
           borderRadius: '8px',
           padding: '15px',
-          width: '150px',
-          height: '200px',
+          width: '120px',
+          height: '150px',  // Reduced from 200px
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -210,7 +213,7 @@ const App = () => {
                 alt="Model preview" 
                 style={{ 
                   width: '100%',
-                  height: '150px',
+                  height: '100px',  // Reduced from 150px
                   objectFit: 'cover',
                   borderRadius: '4px',
                   marginBottom: '10px'
@@ -276,8 +279,8 @@ const App = () => {
           border: '2px solid #444',
           borderRadius: '8px',
           padding: '15px',
-          width: '150px',
-          height: '200px',
+          width: '120px',
+          height: '150px',  // Reduced from 200px
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -291,7 +294,7 @@ const App = () => {
                 alt="Garment preview" 
                 style={{ 
                   width: '100%',
-                  height: '150px',
+                  height: '100px',  // Reduced from 150px
                   objectFit: 'cover',
                   borderRadius: '4px',
                   marginBottom: '10px'
@@ -362,7 +365,7 @@ const App = () => {
           border: 'none',
           borderRadius: '4px',
           cursor: modelImage && garmentImage ? 'pointer' : 'not-allowed',
-          marginTop: '15px',
+          marginTop: 'auto',  // Push button to bottom
           width: '100%'
         }}
         onClick={handleTryOn}

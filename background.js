@@ -37,7 +37,7 @@ chrome.action.onClicked.addListener(async (tab) => {
         top: 20px;
         right: 20px;
         width: 400px;
-        height: 650px;
+        height: 750px;
         border: none;
         border-radius: 8px;
         box-shadow: 0 2px 10px rgba(0,0,0,0.1);
