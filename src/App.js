@@ -196,30 +196,78 @@ const App = () => {
           borderRadius: '8px',
           padding: '15px',
           width: '150px',
-          textAlign: 'center'
+          height: '200px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'relative'
         }}>
           {modelImage ? (
-            <img 
-              src={modelImage} 
-              alt="Model preview" 
-              style={{ 
-                width: '150px', 
-                height: '150px', 
-                objectFit: 'cover',
-                borderRadius: '4px'
-              }} 
-            />
+            <>
+              <img 
+                src={modelImage} 
+                alt="Model preview" 
+                style={{ 
+                  width: '100%',
+                  height: '150px',
+                  objectFit: 'cover',
+                  borderRadius: '4px',
+                  marginBottom: '10px'
+                }} 
+              />
+              <input
+                type="file"
+                id="modelInput"
+                onChange={handleModelUpload}
+                style={{ display: 'none' }}
+              />
+              <label
+                htmlFor="modelInput"
+                style={{
+                  background: '#9C27B0',
+                  color: 'white',
+                  padding: '8px 12px',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '12px',
+                  textAlign: 'center'
+                }}
+              >
+                Choose Photo
+              </label>
+            </>
           ) : (
-            <div style={{ 
-              color: '#ccc',
-              fontSize: '14px',
-              height: '150px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              Model preview
-            </div>
+            <>
+              <div style={{ 
+                color: '#ccc',
+                fontSize: '14px',
+                marginBottom: '10px',
+                textAlign: 'center'
+              }}>
+                Select Model
+              </div>
+              <input
+                type="file"
+                id="modelInput"
+                onChange={handleModelUpload}
+                style={{ display: 'none' }}
+              />
+              <label
+                htmlFor="modelInput"
+                style={{
+                  background: '#9C27B0',
+                  color: 'white',
+                  padding: '8px 12px',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '12px',
+                  textAlign: 'center'
+                }}
+              >
+                Choose Photo
+              </label>
+            </>
           )}
         </div>
 
@@ -229,89 +277,79 @@ const App = () => {
           borderRadius: '8px',
           padding: '15px',
           width: '150px',
-          textAlign: 'center'
+          height: '200px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'relative'
         }}>
           {garmentImage ? (
-            <img 
-              src={garmentImage} 
-              alt="Garment preview" 
-              style={{ 
-                width: '150px', 
-                height: '150px', 
-                objectFit: 'cover',
-                borderRadius: '4px'
-              }} 
-            />
+            <>
+              <img 
+                src={garmentImage} 
+                alt="Garment preview" 
+                style={{ 
+                  width: '100%',
+                  height: '150px',
+                  objectFit: 'cover',
+                  borderRadius: '4px',
+                  marginBottom: '10px'
+                }} 
+              />
+              <input
+                type="file"
+                id="garmentInput"
+                onChange={handleGarmentUpload}
+                style={{ display: 'none' }}
+              />
+              <label
+                htmlFor="garmentInput"
+                style={{
+                  background: '#9C27B0',
+                  color: 'white',
+                  padding: '8px 12px',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '12px',
+                  textAlign: 'center'
+                }}
+              >
+                Choose Photo
+              </label>
+            </>
           ) : (
-            <div style={{ 
-              color: '#ccc',
-              fontSize: '14px',
-              height: '150px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              Garment preview
-            </div>
+            <>
+              <div style={{ 
+                color: '#ccc',
+                fontSize: '14px',
+                marginBottom: '10px',
+                textAlign: 'center'
+              }}>
+                Select Garment
+              </div>
+              <input
+                type="file"
+                id="garmentInput"
+                onChange={handleGarmentUpload}
+                style={{ display: 'none' }}
+              />
+              <label
+                htmlFor="garmentInput"
+                style={{
+                  background: '#9C27B0',
+                  color: 'white',
+                  padding: '8px 12px',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '12px',
+                  textAlign: 'center'
+                }}
+              >
+                Choose Photo
+              </label>
+            </>
           )}
-        </div>
-      </div>
-
-      {/* Upload Buttons Container */}
-      <div style={{ 
-        display: 'flex', 
-        gap: '10px',
-        marginBottom: '15px',
-        justifyContent: 'center'
-      }}>
-        {/* Model Upload Button */}
-        <div>
-          <input
-            type="file"
-            id="modelInput"
-            accept="image/*"
-            onChange={handleModelUpload}
-            style={{ display: 'none' }}
-          />
-          <label
-            htmlFor="modelInput"
-            style={{
-              padding: '8px 16px',
-              backgroundColor: '#9C27B0',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              display: 'inline-block'
-            }}
-          >
-            Upload Model Photo
-          </label>
-        </div>
-
-        {/* Garment Upload Button */}
-        <div>
-          <input
-            type="file"
-            id="garmentInput"
-            accept="image/*"
-            onChange={handleGarmentUpload}
-            style={{ display: 'none' }}
-          />
-          <label
-            htmlFor="garmentInput"
-            style={{
-              padding: '8px 16px',
-              backgroundColor: '#9C27B0',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              display: 'inline-block'
-            }}
-          >
-            Upload Garment Photo
-          </label>
         </div>
       </div>
 
