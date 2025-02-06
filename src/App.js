@@ -11,50 +11,46 @@ const App = () => {
   const [garmentImage, setGarmentImage] = useState(null);
   const [resultImage, setResultImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [category, setCategory] = useState('tops'); // Default to tops
 
   const handleModelUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
-      setModelImage(URL.createObjectURL(file));
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setModelImage({
+          file: file,
+          base64: reader.result,
+          preview: URL.createObjectURL(file)
+        });
+      };
+      reader.readAsDataURL(file);
     }
   };
 
   const handleGarmentUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
-      setGarmentImage(URL.createObjectURL(file));
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setGarmentImage({
+          file: file,
+          base64: reader.result,
+          preview: URL.createObjectURL(file)
+        });
+      };
+      reader.readAsDataURL(file);
     }
   };
 
   const handleTryOn = async () => {
+    if (!modelImage?.base64 || !garmentImage?.base64) return;
+    
     setIsLoading(true);
     try {
-      // Convert images to base64 with proper prefix
-      const modelBase64 = await fetch(modelImage)
-        .then(res => res.blob())
-        .then(blob => {
-          return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-              resolve(reader.result);
-            };
-            reader.readAsDataURL(blob);
-          });
-        });
+      // Log the data we're about to send
+      console.log('Sending request with category:', category);
 
-      const garmentBase64 = await fetch(garmentImage)
-        .then(res => res.blob())
-        .then(blob => {
-          return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-              resolve(reader.result);
-            };
-            reader.readAsDataURL(blob);
-          });
-        });
-
-      // Initial API call to start the prediction
       const response = await fetch(API_URL, {
         method: 'POST',
         headers: {
@@ -62,56 +58,63 @@ const App = () => {
           'Authorization': `Bearer ${API_KEY}`
         },
         body: JSON.stringify({
-          model_image: modelBase64,
-          garment_image: garmentBase64,
-          category: "tops"
+          model_image: modelImage.base64,  // Send the full base64 string including the prefix
+          garment_image: garmentImage.base64,  // Send the full base64 string including the prefix
+          category: category
         })
       });
 
       if (!response.ok) {
         const errorData = await response.json();
+        console.error('API Error Response:', errorData);
         throw new Error(errorData.message || 'API request failed');
       }
 
       const data = await response.json();
-      const predictionId = data.id;
-      console.log('Received prediction ID:', predictionId);
-
-      // Poll for the result using the prediction ID
-      let resultData;
-      while (true) {
-        const statusResponse = await fetch(`${STATUS_URL}/${predictionId}`, {
-          headers: {
-            'Authorization': `Bearer ${API_KEY}`
-          }
-        });
-        
-        resultData = await statusResponse.json();
-        console.log('Status check:', resultData);
-        
-        if (resultData.status === 'completed') {
-          console.log('Processing completed:', resultData);
-          // Check if output exists and has at least one element
-          if (resultData.output && resultData.output.length > 0) {
-            setResultImage(resultData.output[0]); // Get the first element of the output array
+      console.log('Success response:', data);
+      
+      if (data.id) {
+        // Start polling for result
+        let resultData;
+        while (true) {
+          const statusResponse = await fetch(`${STATUS_URL}/${data.id}`, {
+            headers: {
+              'Authorization': `Bearer ${API_KEY}`
+            }
+          });
+          
+          resultData = await statusResponse.json();
+          console.log('Status check:', resultData);
+          
+          if (resultData.status === 'completed') {
+            setResultImage(resultData.output[0]);
             break;
-          } else {
-            throw new Error('No output image in response');
+          } else if (resultData.status === 'failed') {
+            throw new Error('Processing failed');
           }
-        } else if (resultData.status === 'failed') {
-          throw new Error('Processing failed');
+          
+          await new Promise(resolve => setTimeout(resolve, 1000));
         }
-        
-        // Wait 1 second before polling again
-        await new Promise(resolve => setTimeout(resolve, 1000));
       }
-
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Detailed error:', error);
       alert('Failed to process images. Please try again.');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Add this helper function to properly convert File to base64
+  const getBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const base64String = reader.result.split(',')[1];
+        resolve(base64String);
+      };
+      reader.onerror = (error) => reject(error);
+    });
   };
 
   // Add this function to handle closing
@@ -122,7 +125,7 @@ const App = () => {
 
   return (
     <div style={{ 
-      padding: '7px',  // Reduced from 15px
+      padding: '20px',  // Reduced from 15px
       width: '100%',
       boxSizing: 'border-box',
       position: 'relative',
@@ -150,12 +153,20 @@ const App = () => {
         ×
       </button>
 
-      <h1 style={{ 
-        fontSize: '20px',
-        marginLeft: '20px',
+      {/* Header and Category Selector Container */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        marginLeft: '10px',
         marginBottom: '15px',
-        color: 'white'
-      }}>Virtual Try-On</h1>
+        gap: '15px'
+      }}>
+        <h1 style={{ 
+          fontSize: '20px',
+          margin: 0,
+          color: 'white'
+        }}>Virtual Try-On</h1>
+      </div>
 
       {/* Try-On Preview Box */}
       <div style={{ 
@@ -210,40 +221,18 @@ const App = () => {
           justifyContent: 'center',
           position: 'relative'
         }}>
-          {modelImage ? (
-            <>
-              <img 
-                src={modelImage} 
-                alt="Model preview" 
-                style={{ 
-                  width: '100%',
-                  height: '100px',  // Reduced from 150px
-                  objectFit: 'cover',
-                  borderRadius: '4px',
-                  marginBottom: '10px'
-                }} 
-              />
-              <input
-                type="file"
-                id="modelInput"
-                onChange={handleModelUpload}
-                style={{ display: 'none' }}
-              />
-              <label
-                htmlFor="modelInput"
-                style={{
-                  background: '#9C27B0',
-                  color: 'white',
-                  padding: '8px 12px',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  fontSize: '12px',
-                  textAlign: 'center'
-                }}
-              >
-                Choose Photo
-              </label>
-            </>
+          {modelImage?.preview ? (
+            <img 
+              src={modelImage.preview} 
+              alt="Model preview" 
+              style={{ 
+                width: '100%',
+                height: '100px',
+                objectFit: 'cover',
+                borderRadius: '4px',
+                marginBottom: '10px'
+              }} 
+            />
           ) : (
             <>
               <div style={{ 
@@ -266,7 +255,7 @@ const App = () => {
                   background: '#9C27B0',
                   color: 'white',
                   padding: '8px 12px',
-                  borderRadius: '4px',
+                  borderRadius: '8px',
                   cursor: 'pointer',
                   fontSize: '12px',
                   textAlign: 'center'
@@ -291,40 +280,18 @@ const App = () => {
           justifyContent: 'center',
           position: 'relative'
         }}>
-          {garmentImage ? (
-            <>
-              <img 
-                src={garmentImage} 
-                alt="Garment preview" 
-                style={{ 
-                  width: '100%',
-                  height: '100px',  // Reduced from 150px
-                  objectFit: 'cover',
-                  borderRadius: '4px',
-                  marginBottom: '10px'
-                }} 
-              />
-              <input
-                type="file"
-                id="garmentInput"
-                onChange={handleGarmentUpload}
-                style={{ display: 'none' }}
-              />
-              <label
-                htmlFor="garmentInput"
-                style={{
-                  background: '#9C27B0',
-                  color: 'white',
-                  padding: '8px 12px',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  fontSize: '12px',
-                  textAlign: 'center'
-                }}
-              >
-                Choose Photo
-              </label>
-            </>
+          {garmentImage?.preview ? (
+            <img 
+              src={garmentImage.preview} 
+              alt="Garment preview" 
+              style={{ 
+                width: '100%',
+                height: '100px',
+                objectFit: 'cover',
+                borderRadius: '4px',
+                marginBottom: '10px'
+              }} 
+            />
           ) : (
             <>
               <div style={{ 
@@ -347,7 +314,7 @@ const App = () => {
                   background: '#9C27B0',
                   color: 'white',
                   padding: '8px 12px',
-                  borderRadius: '4px',
+                  borderRadius: '8px',
                   cursor: 'pointer',
                   fontSize: '12px',
                   textAlign: 'center'
@@ -360,24 +327,49 @@ const App = () => {
         </div>
       </div>
 
-      {/* Try It On Button */}
-      <button 
-        style={{
-          padding: '8px 16px',
-          backgroundColor: modelImage && garmentImage ? '#9C27B0' : '#666',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: modelImage && garmentImage ? 'pointer' : 'not-allowed',
-          marginTop: 'auto',
-          width: '335px',  // Match the width of Try-On Preview box
-          alignSelf: 'center'  // Center the button
-        }}
-        onClick={handleTryOn}
-        disabled={!modelImage || !garmentImage || isLoading}
-      >
-        {isLoading ? 'Processing...' : 'Try It On'}
-      </button>
+      {/* Try It On Button and Category Selector Container */}
+      <div style={{
+        display: 'flex',
+        gap: '18px',
+        justifyContent: 'center',
+        marginTop: 'auto',
+        width: '335px',  // Match container width
+        alignSelf: 'center'
+      }}>
+        <button 
+          style={{
+            padding: '8px 16px',
+            backgroundColor: modelImage && garmentImage ? '#9C27B0' : '#666',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: modelImage && garmentImage ? 'pointer' : 'not-allowed',
+            width: '160px',  // Half of 290px minus gap
+          }}
+          onClick={handleTryOn}
+          disabled={!modelImage || !garmentImage || isLoading}
+        >
+          {isLoading ? 'Processing...' : 'Try It On'}
+        </button>
+
+        <select 
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          style={{
+            width: '160px',  // Match button width
+            padding: '8px 16px',
+            backgroundColor: '#9C27B0',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            fontSize: '14px'
+          }}
+        >
+          <option value="tops">Tops</option>
+          <option value="bottoms">Bottoms</option>
+        </select>
+      </div>
     </div>
   );
 };
