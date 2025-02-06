@@ -122,13 +122,13 @@ const App = () => {
 
   return (
     <div style={{ 
-      padding: '15px',
+      padding: '7px',  // Reduced from 15px
       width: '100%',
       boxSizing: 'border-box',
       position: 'relative',
-      height: '100%',  // Added to ensure full height usage
-      display: 'flex',  // Added flex display
-      flexDirection: 'column'  // Stack children vertically
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column'
     }}>
       {/* Close Button */}
       <button
@@ -152,6 +152,7 @@ const App = () => {
 
       <h1 style={{ 
         fontSize: '20px',
+        marginLeft: '20px',
         marginBottom: '15px',
         color: 'white'
       }}>Virtual Try-On</h1>
@@ -161,11 +162,13 @@ const App = () => {
         border: '2px solid #444',
         borderRadius: '8px',
         padding: '15px',
-        marginBottom: '15px',
-        height: '350px',  // Increased from 300px
+        marginBottom: '25px',  // Increased from 15px to add more space
+        height: '380px',
+        width: '310px',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        margin: '0 auto',
       }}>
         {isLoading ? (
           <div style={{ color: '#ccc' }}>Processing...</div>
@@ -189,7 +192,8 @@ const App = () => {
       {/* Preview Areas Container */}
       <div style={{ 
         display: 'flex', 
-        gap: '20px',
+        gap: '18px',
+        marginTop: '15px',
         marginBottom: '15px',
         justifyContent: 'center'
       }}>
@@ -198,7 +202,7 @@ const App = () => {
           border: '2px solid #444',
           borderRadius: '8px',
           padding: '15px',
-          width: '120px',
+          width: '127px',
           height: '150px',  // Reduced from 200px
           display: 'flex',
           flexDirection: 'column',
@@ -279,7 +283,7 @@ const App = () => {
           border: '2px solid #444',
           borderRadius: '8px',
           padding: '15px',
-          width: '120px',
+          width: '127px',
           height: '150px',  // Reduced from 200px
           display: 'flex',
           flexDirection: 'column',
@@ -360,13 +364,14 @@ const App = () => {
       <button 
         style={{
           padding: '8px 16px',
-          backgroundColor: modelImage && garmentImage ? '#4CAF50' : '#666',
+          backgroundColor: modelImage && garmentImage ? '#9C27B0' : '#666',
           color: 'white',
           border: 'none',
           borderRadius: '4px',
           cursor: modelImage && garmentImage ? 'pointer' : 'not-allowed',
-          marginTop: 'auto',  // Push button to bottom
-          width: '100%'
+          marginTop: 'auto',
+          width: '335px',  // Match the width of Try-On Preview box
+          alignSelf: 'center'  // Center the button
         }}
         onClick={handleTryOn}
         disabled={!modelImage || !garmentImage || isLoading}
