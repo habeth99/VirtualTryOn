@@ -212,9 +212,9 @@ const App = () => {
         <div style={{ 
           border: '2px solid #444',
           borderRadius: '8px',
-          padding: '8px',  // Reduced padding to allow more space for image
-          width: '140px',
-          height: '170px',
+          padding: '4px',  // Reduced padding to allow image to fill more space
+          width: '150px',
+          height: '180px',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -222,46 +222,59 @@ const App = () => {
           position: 'relative'
         }}>
           {modelImage?.preview ? (
-            <img 
-              src={modelImage.preview} 
-              alt="Model preview" 
-              style={{ 
-                width: '124px',     // 127px - (2 * 8px padding)
-                height: '154px',    // 150px - (2 * 8px padding)
-                objectFit: 'cover', // This ensures the image fills the space
-                borderRadius: '4px',
-                marginBottom: '0'   // Removed margin to maximize space
-              }} 
-            />
-          ) : (
-            <>
-              <div style={{ 
-                color: '#ccc',
-                fontSize: '14px',
-                marginBottom: '10px',
-                textAlign: 'center'
-              }}>
-                Select Model
-              </div>
-              <input
-                type="file"
-                id="modelInput"
-                onChange={handleModelUpload}
-                style={{ display: 'none' }}
+            <div style={{ position: 'relative', width: '132px', height: '162px' }}>  {/* Increased to fill more space */}
+              <img 
+                src={modelImage.preview} 
+                alt="Model preview" 
+                style={{ 
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  borderRadius: '4px',
+                }} 
               />
-              <label
-                htmlFor="modelInput"
+              <button
+                onClick={() => setModelImage(null)}
                 style={{
+                  position: 'absolute',
+                  top: '-6px',
+                  right: '-6px',
+                  width: '20px',
+                  height: '20px',
+                  borderRadius: '50%',
                   background: '#9C27B0',
                   color: 'white',
-                  padding: '8px 12px',
-                  borderRadius: '8px',
+                  border: 'none',
                   cursor: 'pointer',
-                  fontSize: '12px',
-                  textAlign: 'center'
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '14px',
+                  padding: 0,
+                  lineHeight: 1
                 }}
               >
+                ×
+              </button>
+            </div>
+          ) : (
+            <>
+              <div style={{ color: '#ccc', marginBottom: '10px' }}>Select Model</div>
+              <label style={{
+                backgroundColor: '#9C27B0',
+                color: 'white',
+                padding: '8px 16px',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '12px'
+              }}>
                 Choose Photo
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleModelUpload}
+                  style={{ display: 'none' }}
+                />
               </label>
             </>
           )}
@@ -271,9 +284,9 @@ const App = () => {
         <div style={{ 
           border: '2px solid #444',
           borderRadius: '8px',
-          padding: '8px',
-          width: '140px',
-          height: '170px',
+          padding: '4px',  // Reduced padding to allow image to fill more space
+          width: '150px',
+          height: '180px',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -281,46 +294,59 @@ const App = () => {
           position: 'relative'
         }}>
           {garmentImage?.preview ? (
-            <img 
-              src={garmentImage.preview} 
-              alt="Garment preview" 
-              style={{ 
-                width: '124px',
-                height: '154px',
-                objectFit: 'cover',
-                borderRadius: '4px',
-                marginBottom: '0'
-              }} 
-            />
-          ) : (
-            <>
-              <div style={{ 
-                color: '#ccc',
-                fontSize: '14px',
-                marginBottom: '10px',
-                textAlign: 'center'
-              }}>
-                Select Garment
-              </div>
-              <input
-                type="file"
-                id="garmentInput"
-                onChange={handleGarmentUpload}
-                style={{ display: 'none' }}
+            <div style={{ position: 'relative', width: '132px', height: '162px' }}>  {/* Increased to fill more space */}
+              <img 
+                src={garmentImage.preview} 
+                alt="Garment preview" 
+                style={{ 
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  borderRadius: '4px',
+                }} 
               />
-              <label
-                htmlFor="garmentInput"
+              <button
+                onClick={() => setGarmentImage(null)}
                 style={{
+                  position: 'absolute',
+                  top: '-6px',
+                  right: '-6px',
+                  width: '20px',
+                  height: '20px',
+                  borderRadius: '50%',
                   background: '#9C27B0',
                   color: 'white',
-                  padding: '8px 12px',
-                  borderRadius: '8px',
+                  border: 'none',
                   cursor: 'pointer',
-                  fontSize: '12px',
-                  textAlign: 'center'
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '14px',
+                  padding: 0,
+                  lineHeight: 1
                 }}
               >
+                ×
+              </button>
+            </div>
+          ) : (
+            <>
+              <div style={{ color: '#ccc', marginBottom: '10px' }}>Select Garment</div>
+              <label style={{
+                backgroundColor: '#9C27B0',
+                color: 'white',
+                padding: '8px 16px',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '12px'
+              }}>
                 Choose Photo
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleGarmentUpload}
+                  style={{ display: 'none' }}
+                />
               </label>
             </>
           )}
@@ -333,7 +359,7 @@ const App = () => {
         gap: '18px',
         justifyContent: 'center',
         marginTop: 'auto',
-        width: '335px',  // Match container width
+        width: '340px',  // Match container width
         alignSelf: 'center'
       }}>
         <button 
@@ -344,7 +370,7 @@ const App = () => {
             border: 'none',
             borderRadius: '8px',
             cursor: modelImage && garmentImage ? 'pointer' : 'not-allowed',
-            width: '160px',  // Half of 290px minus gap
+            width: '190px',  // Half of 290px minus gap
           }}
           onClick={handleTryOn}
           disabled={!modelImage || !garmentImage || isLoading}
@@ -356,7 +382,7 @@ const App = () => {
           value={category}
           onChange={(e) => setCategory(e.target.value)}
           style={{
-            width: '160px',  // Match button width
+            width: '190px',  // Match button width
             padding: '8px 16px',
             backgroundColor: '#9C27B0',
             color: 'white',
