@@ -212,9 +212,9 @@ const App = () => {
         <div style={{ 
           border: '2px solid #444',
           borderRadius: '8px',
-          padding: '15px',
-          width: '127px',
-          height: '150px',  // Reduced from 200px
+          padding: '8px',  // Reduced padding to allow more space for image
+          width: '140px',
+          height: '170px',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -226,11 +226,11 @@ const App = () => {
               src={modelImage.preview} 
               alt="Model preview" 
               style={{ 
-                width: '100%',
-                height: '100px',
-                objectFit: 'cover',
+                width: '124px',     // 127px - (2 * 8px padding)
+                height: '154px',    // 150px - (2 * 8px padding)
+                objectFit: 'cover', // This ensures the image fills the space
                 borderRadius: '4px',
-                marginBottom: '10px'
+                marginBottom: '0'   // Removed margin to maximize space
               }} 
             />
           ) : (
@@ -271,9 +271,9 @@ const App = () => {
         <div style={{ 
           border: '2px solid #444',
           borderRadius: '8px',
-          padding: '15px',
-          width: '127px',
-          height: '150px',  // Reduced from 200px
+          padding: '8px',
+          width: '140px',
+          height: '170px',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -285,11 +285,11 @@ const App = () => {
               src={garmentImage.preview} 
               alt="Garment preview" 
               style={{ 
-                width: '100%',
-                height: '100px',
+                width: '124px',
+                height: '154px',
                 objectFit: 'cover',
                 borderRadius: '4px',
-                marginBottom: '10px'
+                marginBottom: '0'
               }} 
             />
           ) : (
